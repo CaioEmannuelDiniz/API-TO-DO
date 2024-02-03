@@ -6,9 +6,16 @@ import { where } from "sequelize";
 export const add = async (req:Request,res:Response)=>{
     let{title,done} = req.body
 
-    let todo = await Todo.create({title,done});
+    if(req.body.title){
+        let todo = await Todo.create({
+            title: req.body.title,
+            done:req.body.done ? true:false
+        });
 
-    res.json({todo});
+        res.json({todo});
+    }else{
+        res.json({error: 'Dados não enviados.'});
+    }
 };
 
 export const all = async(req:Request,res:Response)=>{
@@ -23,17 +30,31 @@ export const all = async(req:Request,res:Response)=>{
 };
 
 export const update = async (req:Request,res:Response)=>{
-    let {id} = req.params;
+    let id: string = req.params.id;
     let {title,done} = req.body;
 
     let newtodo = await Todo.findByPk(id);
 
     if(newtodo){
-        newtodo.title = title;
-        newtodo.done = done;
+        if(req.body.title){
+            newtodo.title = title;
+        }
+        if(req.body.done){
+           switch(req.body.done.toLowerCase()){
+                case 'true':
+                case '1':
+                    newtodo.done = true;
+                    break;
+                case 'false':
+                case '0':
+                    newtodo.done = false;
+                    break;
 
-        newtodo.save();
-        res.json({ newtodo });
+           }
+        }
+
+        await newtodo.save();
+        res.json({ item: newtodo });
     }else{
         res.json({error: "Não foi encontrado a tarefa"})
     }
