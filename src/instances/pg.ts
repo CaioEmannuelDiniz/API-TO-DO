@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-
 export const sequelize = new Sequelize(
     process.env.PG_DB  as string,
     process.env.PG_USER as string,
@@ -14,4 +13,4 @@ export const sequelize = new Sequelize(
 
     }
     
-    );
+);

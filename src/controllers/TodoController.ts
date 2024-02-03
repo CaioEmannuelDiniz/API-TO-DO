@@ -1,7 +1,6 @@
-import { title } from 'process';
 import { Request, Response } from "express";
 import {Todo} from '../models/Todo'
-import { where } from "sequelize";
+
 
 export const add = async (req:Request,res:Response)=>{
     let{title,done} = req.body
@@ -62,7 +61,16 @@ export const update = async (req:Request,res:Response)=>{
 
 export const remove = async (req:Request,res:Response)=>{
 
-    let {id} = req.params;
-    await Todo.destroy({where:{id}});
+    let id:string = req.params.id;
+    
+
+    let todo = await Todo.findByPk(id);
+
+    if(todo){
+        await todo.destroy();
+        
+    }
+
     res.json({message:`ID ${id} foi deletado `});
+    
 };
